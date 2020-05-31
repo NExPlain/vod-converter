@@ -175,10 +175,3 @@ def add_text_node(node, name, text):
     subnode = ET.SubElement(node, name)
     subnode.text = f"{text}"
     return subnode
-
-
-
-
-
-
-

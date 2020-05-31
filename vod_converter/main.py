@@ -13,6 +13,7 @@ import kitti
 import kitti_tracking
 import udacity
 import voc
+import tsinghua_daimler
 
 import sys
 
@@ -24,7 +25,8 @@ INGESTORS = {
     'kitti-tracking': kitti_tracking.KITTITrackingIngestor(),
     'voc': voc.VOCIngestor(),
     'udacity-crowdai': udacity.UdacityCrowdAIIngestor(),
-    'udacity-autti': udacity.UdacityAuttiIngestor()
+    'udacity-autti': udacity.UdacityAuttiIngestor(),
+    'tsinghua-daimler': tsinghua_daimler.TsinghuaDaimlerIngestor(),
 }
 
 EGESTORS = {
