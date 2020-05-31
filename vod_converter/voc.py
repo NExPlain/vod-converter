@@ -83,26 +83,10 @@ class VOCEgestor(Egestor):
 
     def expected_labels(self):
         return {
-            'aeroplane': [],
-            'bicycle': [],
-            'bird': [],
-            'boat': [],
-            'bottle': [],
-            'bus': [],
-            'car': [],
-            'cat': [],
-            'chair': [],
-            'cow': [],
-            'diningtable': [],
-            'dog': [],
-            'horse': [],
-            'motorbike': [],
-            'person': ['pedestrian'],
-            'pottedplant': [],
-            'sheep': [],
-            'sofa': [],
-            'train': [],
-            'tvmonitor': []
+            'Car': [],
+            'Cyclist': ['biker', 'motorcyclist', 'tricyclist', 'wheelchairuser', 'mopedrider'],
+            'Misc': ['unlabeled',],
+            'Pedestrian': ['person'],
         }
 
     def egest(self, *, image_detections, root):

@@ -145,11 +145,14 @@ class KITTIEgestor(Egestor):
             out_labels_path = f"{labels_dir}/{image_id}.txt"
             with open(out_labels_path, 'w') as csvfile:
                 csvwriter = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_MINIMAL)
-
+                
                 for detection in image_detection['detections']:
                     kitti_row = [-1] * 15
                     kitti_row[0] = detection['label']
-                    kitti_row[1] = DEFAULT_TRUNCATED
+                    truncated = DEFAULT_TRUNCATED
+                    if 'truncated' in detection:
+                        truncated = detection['truncated']
+                    kitti_row[1] = truncated
                     kitti_row[2] = DEFAULT_OCCLUDED
                     x1 = detection['left']
                     x2 = detection['right']

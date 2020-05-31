@@ -97,7 +97,12 @@ class TsinghuaDaimlerIngestor(Ingestor):
         image_ext = 'png'
         results = []
         for sub_dir, image_ids in sub_dir_with_image_ids:
+            idx = 1
+            max_n = len(image_ids)
             for image_id in image_ids:
+                if idx % 1000 == 0:
+                    print('ingesting {}/{} images in {} subdir'.format(idx, max_n, sub_dir))
+                idx += 1
                 results.append(self._get_image_detection(path, sub_dir, image_id, image_ext))
         return results
 
@@ -110,9 +115,13 @@ class TsinghuaDaimlerIngestor(Ingestor):
             path = f"{root}/{sub_dir}.txt"
             with open(path) as f:
                 image_ids = f.read().strip().split('\n')
+                valid_ids = []
                 for i in range(len(image_ids)):
-                    image_ids[i] = image_ids[i][:-len('_leftImg8bit')]
-                ret.append((sub_dir, image_ids))
+                    # skip empty line
+                    if not len(image_ids[i]):
+                        continue
+                    valid_ids.append(image_ids[i][:-len('_leftImg8bit')])
+                ret.append((sub_dir, valid_ids))
         return ret
         
 
@@ -143,6 +152,11 @@ class TsinghuaDaimlerIngestor(Ingestor):
                 max_col = float(box['maxcol'])
                 min_row = float(box['minrow'])
                 max_row = float(box['maxrow'])
+                occluded = 0
+                if 'tags' in box:
+                    for tag in box['tags']:
+                        if 'occluded>' in tag:
+                            occluded = (float(tag.split('occluded>')[1]) + 1) / 100.0
                 if min_col < 0:
                     # print(f'Fixed detection out range, min_col=: {min_col}')
                     min_col = 0
@@ -160,7 +174,8 @@ class TsinghuaDaimlerIngestor(Ingestor):
                     'left': min_col,
                     'right': max_col,
                     'top': min_row,
-                    'bottom': max_row
+                    'bottom': max_row,
+                    'truncated': occluded
                 })
         return detections
 

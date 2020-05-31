@@ -130,12 +130,16 @@ def convert(*, from_path, ingestor, to_path, egestor, select_only_known_labels, 
     if not from_valid:
         return from_valid, from_msg
 
+    print('start ingesting source data...')
     image_detections = ingestor.ingest(from_path)
+    print('finish ingesting source data!')
     validate_image_detections(image_detections)
+    print('validated source data! start converting...')
     image_detections = convert_labels(
         image_detections=image_detections, expected_labels=egestor.expected_labels(),
         select_only_known_labels=select_only_known_labels,
         filter_images_without_labels=filter_images_without_labels)
+    print('Finished converting! Start egesting to output...')
 
     egestor.egest(image_detections=image_detections, root=to_path)
     return True, ''
@@ -164,7 +168,12 @@ def convert_labels(*, image_detections, expected_labels,
             convert_dict[alias.lower()] = label
 
     final_image_detections = []
+    max_n = len(image_detections)
+    idx = 1
     for image_detection in image_detections:
+        if idx % 1000 == 0:
+            print('converting {}/{}...'.format(idx, max_n))
+        idx += 1
         detections = []
         for detection in image_detection['detections']:
             label = detection['label']
